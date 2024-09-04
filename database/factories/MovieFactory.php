@@ -15,8 +15,11 @@ class MovieFactory extends Factory
     {
         return [
             //
-            'title' => $this->faker->realText(10),
+            'title' => $this->faker->realText($maxNbChars = 15),
             'image_url' => $this->faker->imageUrl(),
+            'published_year' => $this->faker->year,
+            'is_showing' => $this->faker->boolean,
+            'description' => $this->faker->realText($maxNbChars = 100),
         ];
     }
 }
