@@ -28,5 +28,6 @@
         </tr>
         @endforeach
     </table>
+    <p><a href="/admin/movies/create">新規登録</a></p>
 </body>
 </html>
