@@ -9,6 +9,7 @@
 <body>
     <table>
         <tr>
+            <th></th>
             <th>映画タイトル</th>
             <th>画像URL</th>
             <th>公開年</th>
@@ -17,6 +18,7 @@
         </tr>
         @foreach ($movies as $movie)
         <tr>
+            <td><a href="movies/{{ $movie->id }}/edit">編集</a></td>
             <td>{{ $movie->title }}</td>
             <td>{{ $movie->image_url }}</td>
             <td>{{ $movie->published_year }}</td>
