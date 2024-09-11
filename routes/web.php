@@ -14,3 +14,4 @@ Route::get('/admin/movies/create', [MovieController::class, 'createMovie']);
 Route::post('/admin/movies/store', [MovieController::class, 'postMovie']);
 Route::get('/admin/movies/{id}/edit', [MovieController::class, 'editMovie']);
 Route::patch('/admin/movies/{id}/update', [MovieController::class, 'patchMovie']);
+Route::delete('/admin/movies/{id}/destroy', [MovieController::class, 'deleteMovie']);

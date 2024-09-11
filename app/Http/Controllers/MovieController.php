@@ -82,4 +82,14 @@ class MovieController extends Controller
             return redirect()->back()->withErrors(['error' => '何か問題が発生しました。']);
         }
       }
+      public function deleteMovie($id) 
+      { 
+        $movie = Movie::findOrFail($id);
+
+        // データが存在すれば削除
+        $movie->delete();
+
+        // 成功メッセージをフロントエンドに返す
+        return redirect()->back()->with('success', '削除しました。');
+       }
 }

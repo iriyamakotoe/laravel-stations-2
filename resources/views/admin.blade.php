@@ -7,6 +7,11 @@
     <title>Movie</title>
 </head>
 <body>
+@if (session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+@endif
     <table>
         <tr>
             <th></th>
@@ -18,7 +23,12 @@
         </tr>
         @foreach ($movies as $movie)
         <tr>
-            <td><a href="movies/{{ $movie->id }}/edit">編集</a></td>
+            <td><a href="movies/{{ $movie->id }}/edit">編集</a>｜
+            <form action="/admin/movies/{{ $movie->id }}/destroy" method="POST" onsubmit="return confirm('本当に削除しますか？');">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="btn btn-danger">削除</button>
+        </form>
             <td>{{ $movie->title }}</td>
             <td>{{ $movie->image_url }}</td>
             <td>{{ $movie->published_year }}</td>
