@@ -5,10 +5,40 @@ use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
 class MovieController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $movies = Movie::all();
-        return view('index', ['movies' => $movies]);
+        // クエリパラメータから検索条件を取得
+        $query = Movie::query();
+
+        // 名前での検索を実行
+        $keyword = $request->input('keyword');
+        $isShowing = $request->input('is_showing');
+
+        if ($request->filled('keyword')) {
+            $query->where('title', 'LIKE', '%' . $keyword . '%')
+                  ->orWhere('description', 'LIKE', '%' . $keyword . '%');
+        }
+        if ($isShowing !== null && $isShowing !== 'all') {
+            $query->where('is_showing', intval($isShowing));
+        }
+
+        // クエリパラメータがない場合、全データを表示するなどのデフォルト動作
+        if (!$request->filled('keyword') && $isShowing === null) {
+            // $movies = Movie::all();
+        }
+
+        // ページネーションを設定（例：1ページあたり15件）
+        $movies = $query->paginate(20)->appends([
+            'keyword' => $keyword,
+            'is_showing' => $isShowing
+        ]);
+
+        // $movies = Movie::all();
+        return view('index', [
+            'movies' => $movies,
+            'keyword' => $keyword,
+            'isShowing' => $isShowing
+        ]);
     }
     public function admin()
     {
