@@ -40,6 +40,10 @@
             <th>概要</th>
             <td><textarea name="description">{{ old('description') }}</textarea></td>
         </tr>
+        <tr>
+            <th>ジャンル</th>
+            <td><input type="text" name="genre" value="{{ old('genre') }}" /></td>
+        </tr>
     </table>
     <p><input type="submit"></p>
 </form>

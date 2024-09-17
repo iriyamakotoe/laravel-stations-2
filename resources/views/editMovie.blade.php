@@ -47,6 +47,10 @@
             <th>概要</th>
             <td><textarea name="description">{{ $movies->description }}</textarea></td>
         </tr>
+        <tr>
+            <th>ジャンル</th>
+            <td><input type="text" name="genre"  value="{{ $genreName }}" /></td>
+        </tr>
     </table>
     <p><input type="submit"></p>
 </form>

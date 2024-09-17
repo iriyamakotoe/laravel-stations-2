@@ -16,6 +16,7 @@
         <tr>
             <th></th>
             <th>映画タイトル</th>
+            <th>ジャンル</th>
             <th>画像URL</th>
             <th>公開年</th>
             <th>上映中かどうか</th>
@@ -23,13 +24,14 @@
         </tr>
         @foreach ($movies as $movie)
         <tr>
-            <td><a href="movies/{{ $movie->id }}/edit">編集</a>｜
+            <td><a href="/admin/movies/{{ $movie->id }}/edit">編集</a>｜
             <form action="/admin/movies/{{ $movie->id }}/destroy" method="POST" onsubmit="return confirm('本当に削除しますか？');">
             @csrf
             @method('DELETE')
             <button type="submit" class="btn btn-danger">削除</button>
         </form>
             <td>{{ $movie->title }}</td>
+            <td>{{ $movie->genre ? $movie->genre->name : 'ジャンルなし' }}</td>
             <td>{{ $movie->image_url }}</td>
             <td>{{ $movie->published_year }}</td>
             <td>@if ($movie->is_showing) 上映中

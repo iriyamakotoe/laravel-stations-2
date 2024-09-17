@@ -1,12 +1,15 @@
 <?php
 namespace App\Http\Controllers;
 use App\Models\Movie;
+use App\Models\Genre;
 use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
 class MovieController extends Controller
 {
     public function index(Request $request)
     {
+        
         // クエリパラメータから検索条件を取得
         $query = Movie::query();
 
@@ -33,7 +36,6 @@ class MovieController extends Controller
             'is_showing' => $isShowing
         ]);
 
-        // $movies = Movie::all();
         return view('index', [
             'movies' => $movies,
             'keyword' => $keyword,
@@ -42,8 +44,12 @@ class MovieController extends Controller
     }
     public function admin()
     {
-        $movies = Movie::all();
-        return view('admin', ['movies' => $movies]);
+        $movies = Movie::with('genre')->get();
+        // $movies = Movie::with('genre')->findOrFail($id);
+        // ジャンルがnullの場合の処理
+        return view('admin', [
+            'movies' => $movies
+        ]);
     }
     public function createMovie()
     {
@@ -56,61 +62,108 @@ class MovieController extends Controller
             'image_url' => 'required|active_url',
             'published_year' => 'required|numeric',
             'is_showing' => 'required',           
-            'description' => 'required',           
+            'description' => 'required',        
+            'genre' => 'required',     
         ]);
-        $post = new Movie();
-        $post->title = $request->input('title');
-        $post->image_url = $request->input('image_url');
-        $post->published_year = $request->input('published_year');
-        $is_showing = $request->input('is_showing');
-        if($is_showing=="is_showing") {
-            $is_showing = true;
-        } elseif($is_showing=="not_showing") {
-            $is_showing = false;
-        }
-        $post->is_showing = $is_showing;
-        $post->description = $request->input('description');
-        $post->save();
+
+        DB::transaction(function () use ($request) {
+            $genre = new Genre();
+            // 入力されたジャンル名を取得
+            $genreName = $request->input('genre');
+            // genresテーブルで該当のジャンル名が存在するか確認
+            $genre = Genre::where('name', $genreName)->first();
+            if ($genre) {
+                // ジャンルが既に存在する場合は何もしない
+                $genreId = $genre->id;
+            } else {
+                // ジャンルが存在しない場合、新規に作成
+                $genre = Genre::create(['name' => $genreName]);
+                $genreId = $genre->id;
+            }
+            $genre->save();
+
+            $post = new Movie();
+            $post->title = $request->input('title');
+            $post->image_url = $request->input('image_url');
+            $post->published_year = $request->input('published_year');
+            $is_showing = $request->input('is_showing');
+            if($is_showing=="is_showing") {
+                $is_showing = true;
+            } elseif($is_showing=="not_showing") {
+                $is_showing = false;
+            }
+            $post->is_showing = $is_showing;
+            $post->description = $request->input('description');
+            $post->genre_id = $genreId;
+            $post->save();
+        });
+
         return redirect('/admin/movies');
      }
      public function editMovie($id)
      {
-        $movies = Movie::where('id',$id)->first();
-        return view('editMovie', ['movies' => $movies]);
+        $movies = Movie::with('genre')->findOrFail($id);
+        // ジャンルがnullの場合の処理
+        if (is_null($movies->genre)) {
+            // ジャンルがない場合の処理
+            // 例: デフォルトのジャンルを設定する、エラーメッセージを表示するなど
+            $genreName = '';
+        } else {
+            // ジャンルが存在する場合の処理
+            $genreName = $movies->genre->name;
+        }
+        return view('editMovie', [
+            'movies' => $movies,
+            'genreName' => $genreName,
+        ]);
      }
      public function patchMovie(Request $request, $id) 
      { 
          $validated = $request->validate([
-             'title' => 'required',
+             'title' => 'required|unique:movies',
              'image_url' => 'required|active_url',
              'published_year' => 'required|numeric',
              'is_showing' => 'required',           
-             'description' => 'required',           
+             'description' => 'required',
+             'genre' => 'required', 
          ]);
 
-         try {
+        //  try {
+            // 入力された上映状態を取得
             $is_showing = $request->is_showing;
             if($is_showing=="is_showing") {
                 $is_showing = true;
             } elseif($is_showing=="not_showing") {
                 $is_showing = false;
             }
-            Movie::where("id", $id)->update([
-               "title" => $request->title,
-               "image_url" => $request->image_url,
-               "published_year" => $request->published_year,
-               "is_showing" => $is_showing,
-               "description" => $request->description
-           ]);
+
+            DB::transaction(function () use ($request, $id,$is_showing) {
+                // 入力されたジャンル名を取得
+                $genreName = $request->input('genre');
+                // genresテーブルで該当のジャンル名が存在するか確認
+                $genre = Genre::firstOrCreate(['name' => $genreName]);
+                // 新規に作成されたジャンルまたは既存のジャンルのIDを取得
+                $genreId = $genre->id;
+
+                Movie::where("id", $id)->update([
+                "title" => $request->title,
+                "image_url" => $request->image_url,
+                "published_year" => $request->published_year,
+                "is_showing" => $is_showing,
+                "description" => $request->description,
+                'genre_id' => $genreId,
+                ]);
+            });
+
             return redirect('/admin/movies');
-        } catch (QueryException $e) {
-            // 重複エラーをキャッチして、エラーメッセージをフロントに表示
-            if ($e->errorInfo[1] == 1062) { // MySQLの重複エラーコードは1062
-                return redirect()->back()->withErrors(['title' => 'このタイトルは既に使用されています。']);
-            }
-            // 他の例外処理
-            return redirect()->back()->withErrors(['error' => '何か問題が発生しました。']);
-        }
+        // } catch (QueryException $e) {
+        //     // 重複エラーをキャッチして、エラーメッセージをフロントに表示
+        //     if ($e->errorInfo[1] == 1062) { // MySQLの重複エラーコードは1062
+        //         return redirect()->back()->withErrors(['title' => 'このタイトルは既に使用されています。']);
+        //     }
+        //     // 他の例外処理
+        //     return redirect()->back()->withErrors(['error' => $e->errorInfo[2] . '何か問題が発生しました。']);
+        // }
       }
       public function deleteMovie($id) 
       { 

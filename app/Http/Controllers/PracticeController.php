@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 use App\Practice;
+use App\Models\Genre;
 class PracticeController extends Controller
 {
     public function sample()
@@ -22,7 +23,9 @@ class PracticeController extends Controller
 
     public function getPractice()
     {
-        $practices = Practice::all();
-        return view('getPractice', ['practices' => $practices]);
+        $practice = Genre::all();
+        return response()->json($practice);
+        // $practices = Genre::all();
+        // return view('getPractice', ['practices' => $practices]);
     }
 }
