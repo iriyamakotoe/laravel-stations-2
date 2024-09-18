@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 use App\Models\Movie;
 use App\Models\Genre;
+use App\Models\Sheet;
 use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
@@ -175,4 +176,13 @@ class MovieController extends Controller
         // 成功メッセージをフロントエンドに返す
         return redirect()->back()->with('success', '削除しました。');
        }
+
+       public function sheets() 
+       { 
+         $sheets = Sheet::all();
+ 
+         return view('sheets', [
+            'sheets' => $sheets
+        ]);
+        }
 }
