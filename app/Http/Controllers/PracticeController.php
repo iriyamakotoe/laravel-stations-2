@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 use App\Practice;
 use App\Models\Genre;
+use App\Models\Schedule;
 class PracticeController extends Controller
 {
     public function sample()
@@ -23,7 +24,7 @@ class PracticeController extends Controller
 
     public function getPractice()
     {
-        $practice = Genre::all();
+        $practice = Schedule::all();
         return response()->json($practice);
         // $practices = Genre::all();
         // return view('getPractice', ['practices' => $practices]);

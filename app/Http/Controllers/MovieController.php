@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 use App\Models\Movie;
 use App\Models\Genre;
 use App\Models\Sheet;
+use App\Models\Schedule;
 use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
@@ -166,8 +167,8 @@ class MovieController extends Controller
         //     return redirect()->back()->withErrors(['error' => $e->errorInfo[2] . '何か問題が発生しました。']);
         // }
       }
-      public function deleteMovie($id) 
-      { 
+    public function deleteMovie($id) 
+    { 
         $movie = Movie::findOrFail($id);
 
         // データが存在すれば削除
@@ -175,14 +176,26 @@ class MovieController extends Controller
 
         // 成功メッセージをフロントエンドに返す
         return redirect()->back()->with('success', '削除しました。');
-       }
+    }
 
-       public function sheets() 
-       { 
+    public function sheets() 
+    { 
          $sheets = Sheet::all();
  
          return view('sheets', [
             'sheets' => $sheets
         ]);
-        }
+    }
+
+    public function detailMovie($id) 
+    { 
+        // 昇順でソート
+        $movie = Movie::with(['genre', 'schedules' => function ($query) {
+            $query->orderBy('start_time', 'asc');
+        }])->findOrFail($id);
+
+        return view('detailMovie', [
+            'movie' => $movie
+        ]);
+    }
 }

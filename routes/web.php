@@ -5,6 +5,7 @@ use App\Http\Controllers\MovieController;
 
 // Route::get('URL', [Controllerの名前::class, 'Controller内のfunction名']);
 Route::get('/movies', [MovieController::class, 'index']);
+Route::get('/movies/{id}', [MovieController::class, 'detailMovie']);
 Route::get('/admin/movies', [MovieController::class, 'admin']);
 Route::get('/admin/movies/create', [MovieController::class, 'createMovie']);
 Route::post('/admin/movies/store', [MovieController::class, 'postMovie']);

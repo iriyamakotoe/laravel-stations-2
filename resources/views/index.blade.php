@@ -19,6 +19,7 @@
     <table>
     @foreach ($movies as $movie)
         <tr>
+            <td><a href="/movies/{{ $movie->id }}">詳細</a></td>
             <td>{{ $movie->title }}</td>
             <td>{{ $movie->image_url }}</td>
             <td>{{ $movie->published_year }}</td>
