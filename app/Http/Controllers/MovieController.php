@@ -2,7 +2,6 @@
 namespace App\Http\Controllers;
 use App\Models\Movie;
 use App\Models\Genre;
-use App\Models\Sheet;
 use App\Models\Schedule;
 use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
@@ -55,8 +54,9 @@ class MovieController extends Controller
     }
     public function createMovie()
     {
-        return view('createMovie', []);
+        return view('createMovie');
     }
+
     public function postMovie(Request $request) 
     { 
         $validated = $request->validate([
@@ -195,6 +195,18 @@ class MovieController extends Controller
         }])->findOrFail($id);
 
         return view('detailMovie', [
+            'movie' => $movie
+        ]);
+    }
+
+    public function adminMovie($id) 
+    { 
+        // 昇順でソート
+        $movie = Movie::with(['genre', 'schedules' => function ($query) {
+            $query->orderBy('start_time', 'asc');
+        }])->findOrFail($id);
+
+        return view('adminMovie', [
             'movie' => $movie
         ]);
     }
