@@ -31,9 +31,9 @@ class ScheduleController extends Controller
             'schedule' => $schedule,
         ]);
     }
-    public function createSchedule()
+    public function createSchedule($id)
     {
-        return view('createSchedule', []);
+        return view('createSchedule', ['movie_id' => $id,]);
     }
     public function postSchedule(Request $request,$id) 
     { 
@@ -45,11 +45,35 @@ class ScheduleController extends Controller
             'end_time_time' => 'required|date_format:H:i',
         ]);
 
-        DB::transaction(function () use ($request,$validated, $id) {
-            // 開始日時と終了日時をCarbonで組み合わせる
-            $startTime = Carbon::createFromFormat('Y-m-d H:i', $validated['start_time_date'] . ' ' . $validated['start_time_time']);
-            $endTime = Carbon::createFromFormat('Y-m-d H:i', $validated['end_time_date'] . ' ' . $validated['end_time_time']);
+        // 開始日時と終了日時をCarbonで組み合わせる
+        $startTime = Carbon::createFromFormat('Y-m-d H:i', $validated['start_time_date'] . ' ' . $validated['start_time_time']);
+        $endTime = Carbon::createFromFormat('Y-m-d H:i', $validated['end_time_date'] . ' ' . $validated['end_time_time']);
 
+        // カスタムバリデーション
+        if ($startTime->gt($endTime)) {
+            return back()->withErrors([
+                'start_time_date' => '開始日時は終了日時より前でなければなりません。',
+                'end_time_date' => '終了日時は開始日時より後でなければなりません。',
+                'start_time_time' => '開始日時は終了日時より前でなければなりません。',
+                'end_time_time' => '終了日時は開始日時より後でなければなりません。',
+            ])->withInput();
+        }
+
+        if ($startTime->eq($endTime)) {
+            return back()->withErrors([
+                'start_time_time' => '開始時間と終了時間を同じにすることはできません。',
+                'end_time_time' => '開始時間と終了時間を同じにすることはできません。',
+            ])->withInput();
+        }
+
+        if ($startTime->diffInMinutes($endTime) < 6) {
+            return back()->withErrors([
+                'start_time_time' => '開始時間と終了時間の差は5分以上にする必要があります。',
+                'end_time_time' => '開始時間と終了時間の差は5分以上にする必要があります。',
+            ])->withInput();
+        }
+
+        DB::transaction(function () use ($request, $validated, $id, $startTime, $endTime) {
             $post = new Schedule();
             $post->movie_id = $id;
             $post->start_time = $startTime;
@@ -77,11 +101,36 @@ class ScheduleController extends Controller
             'end_time_time' => 'required|date_format:H:i',
         ]);
 
+        // 開始日時と終了日時をCarbonで組み合わせる
+        $startTime = Carbon::createFromFormat('Y-m-d H:i', $validated['start_time_date'] . ' ' . $validated['start_time_time']);
+        $endTime = Carbon::createFromFormat('Y-m-d H:i', $validated['end_time_date'] . ' ' . $validated['end_time_time']);
+
+        // カスタムバリデーション
+        if ($startTime->gt($endTime)) {
+            return back()->withErrors([
+                'start_time_date' => '開始日時は終了日時より前でなければなりません。',
+                'end_time_date' => '終了日時は開始日時より後でなければなりません。',
+                'start_time_time' => '開始日時は終了日時より前でなければなりません。',
+                'end_time_time' => '終了日時は開始日時より後でなければなりません。',
+            ])->withInput();
+        }
+
+        if ($startTime->eq($endTime)) {
+            return back()->withErrors([
+                'start_time_time' => '開始時間と終了時間を同じにすることはできません。',
+                'end_time_time' => '開始時間と終了時間を同じにすることはできません。'
+            ])->withInput();
+        }
+
+        if ($startTime->diffInMinutes($endTime) < 6) {
+            return back()->withErrors([
+                'start_time_time' => '開始時間と終了時間の差は5分以上にする必要があります。',
+                'end_time_time' => '開始時間と終了時間の差は5分以上にする必要があります。'
+            ])->withInput();
+        }
+
         // トランザクションでデータ更新
-        DB::transaction(function () use ($request, $validated, $id) {
-            // 開始日時と終了日時をCarbonで組み合わせる
-            $startTime = Carbon::createFromFormat('Y-m-d H:i', $validated['start_time_date'] . ' ' . $validated['start_time_time']);
-            $endTime = Carbon::createFromFormat('Y-m-d H:i', $validated['end_time_date'] . ' ' . $validated['end_time_time']);
+        DB::transaction(function () use ($request, $validated, $id, $startTime, $endTime) {
 
             // 該当するスケジュールを取得
             $schedule = Schedule::findOrFail($id);

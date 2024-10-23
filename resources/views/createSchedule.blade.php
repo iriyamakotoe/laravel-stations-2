@@ -18,6 +18,7 @@
 @endif 
 <form action="store" method="POST" class="form-horizontal">
 @csrf
+<p>movie_id：<input type="text" name="movie_id" value="{{ $movie_id }}"></p>
     <p>開始日付：<input type="date" name="start_time_date">　開始時間：<input type="time" name="start_time_time"></p>
     <p>終了日付：<input type="date" name="end_time_date">　終了時間：<input type="time" name="end_time_time"></p>
     <p><input type="submit"></p>
