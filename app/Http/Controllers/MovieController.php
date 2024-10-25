@@ -6,6 +6,7 @@ use App\Models\Schedule;
 use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 class MovieController extends Controller
 {
     public function index(Request $request)
@@ -193,9 +194,11 @@ class MovieController extends Controller
         $movie = Movie::with(['genre', 'schedules' => function ($query) {
             $query->orderBy('start_time', 'asc');
         }])->findOrFail($id);
+        $today = Carbon::today()->format('Y-m-d');;
 
         return view('detailMovie', [
-            'movie' => $movie
+            'movie' => $movie,
+            'today' => $today
         ]);
     }
 

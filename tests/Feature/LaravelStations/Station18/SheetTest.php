@@ -160,7 +160,7 @@ class SheetTest extends TestCase
             'email' => 'sample@techbowl.com',
             'name' => 'サンプルユーザー',
         ]);
-        $response = $this->get('/movies/'.$movieId.'/schedules/'.$scheduleId.'/reservations/create?date='.CarbonImmutable::now().'&sheetId='.Sheet::first()->id);
+        $response = $this->get('/movies/'.$movieId.'/schedules/'.$scheduleId.'/reservations/create?date='.CarbonImmutable::now()->format('Y-m-d').'&sheetId='.Sheet::first()->id);
         $response->assertStatus(400);
     }
 

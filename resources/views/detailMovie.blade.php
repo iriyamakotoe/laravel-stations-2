@@ -7,6 +7,18 @@
     <title>詳細</title>
 </head>
 <body>
+@if (session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+@endif
+
+@if ($errors->has('duplicate'))
+    <div class="alert alert-danger">
+        {{ $errors->first('duplicate') }}
+    </div>
+@endif
+
     <h1>{{ $movie->title }}</h1>
     <table>
         <tr>
@@ -35,10 +47,9 @@
             <th>スケジュール</th>
             <td>
             @foreach ($movie->schedules as $schedule)    
-            {{ $schedule->start_time->format('H:i') }}〜{{ $schedule->end_time->format('H:i') }}<br>
+            {{ $schedule->start_time->format('H:i') }}〜{{ $schedule->end_time->format('H:i') }} <a href="/movies/{{$movie->id}}/schedules/{{$schedule->id}}/sheets?date={{$today}}">座席を予約する</a><br>
             @endforeach</td>
         </tr>
     </table>
-
 </body>
 </html>
