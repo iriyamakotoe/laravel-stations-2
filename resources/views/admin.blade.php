@@ -30,7 +30,7 @@
             @method('DELETE')
             <button type="submit" class="btn btn-danger">削除</button>
         </form>
-            <td>{{ $movie->title }}</td>
+            <td><a href="/admin/movies/{{ $movie->id }}">{{ $movie->title }}</a></td>
             <td>{{ $movie->genre ? $movie->genre->name : 'ジャンルなし' }}</td>
             <td>{{ $movie->image_url }}</td>
             <td>{{ $movie->published_year }}</td>

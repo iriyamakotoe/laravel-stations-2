@@ -11,7 +11,7 @@ Route::get('/movies', [MovieController::class, 'index']);
 Route::get('/movies/{id}', [MovieController::class, 'detailMovie']);
 Route::get('/admin/movies', [MovieController::class, 'admin']);
 Route::get('/admin/movies/create', [MovieController::class, 'createMovie']);
-Route::get('/admin/movies/{id}', [MovieController::class, 'adminMovie']);
+Route::get('/admin/movies/{id}', [MovieController::class, 'detailAdminMovie']);
 Route::post('/admin/movies/store', [MovieController::class, 'postMovie']);
 Route::get('/admin/movies/{id}/edit', [MovieController::class, 'editMovie']);
 Route::patch('/admin/movies/{id}/update', [MovieController::class, 'patchMovie']);
@@ -26,11 +26,14 @@ Route::patch('/admin/schedules/{id}/update', [ScheduleController::class, 'patchS
 Route::delete('/admin/schedules/{id}/destroy', [ScheduleController::class, 'deleteSchedule']);
 
 Route::get('/sheets', [SheetController::class, 'sheets']);
+
 Route::get('/movies/{movie_id}/schedules/{schedule_id}/sheets', [ReservationController::class, 'getSheets']);
 Route::get('/movies/{movie_id}/schedules/{schedule_id}/reservations/create', [ReservationController::class, 'createReservation']);
 Route::post('/reservations/store', [ReservationController::class, 'postReservation']);
 
-
-// Route::get('/getGenre', [PracticeController::class, 'getPractice']);
-
-
+Route::get('/admin/reservations', [ReservationController::class, 'adminReservation']);
+Route::get('/admin/reservations/create', [ReservationController::class, 'createAdminReservation']);
+Route::post('/admin/reservations', [ReservationController::class, 'postAdminReservation']);
+Route::get('/admin/reservations/{id}/edit', [ReservationController::class, 'editReservation']);
+Route::patch('/admin/reservations/{id}', [ReservationController::class, 'patchReservation']);
+Route::delete('/admin/reservations/{id}', [ReservationController::class, 'deleteReservation']);

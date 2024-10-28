@@ -37,6 +37,7 @@
             @foreach ($movie->schedules as $schedule)    
             <a href="/admin/schedules/{{ $schedule->id }}">{{ $schedule->start_time->format('Y-m-d H:i:s') }}〜{{ $schedule->end_time->format('Y-m-d H:i:s') }}</a><br>
             @endforeach
+            <p><a href="/admin/movies/{{ $movie->id }}/schedules/create">新規登録</a></p>
             </td>
         </tr>
     </table>

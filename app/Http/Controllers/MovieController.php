@@ -202,15 +202,17 @@ class MovieController extends Controller
         ]);
     }
 
-    public function adminMovie($id) 
+    public function detailAdminMovie($id) 
     { 
         // 昇順でソート
         $movie = Movie::with(['genre', 'schedules' => function ($query) {
             $query->orderBy('start_time', 'asc');
         }])->findOrFail($id);
+        $today = Carbon::today()->format('Y-m-d');;
 
-        return view('adminMovie', [
-            'movie' => $movie
+        return view('detailAdminMovie', [
+            'movie' => $movie,
+            'today' => $today
         ]);
     }
 }

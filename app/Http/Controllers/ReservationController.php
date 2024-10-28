@@ -8,6 +8,7 @@ use App\Models\Schedule;
 use App\Models\Sheet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class ReservationController extends Controller
 {
@@ -124,5 +125,122 @@ class ReservationController extends Controller
             // その他のエラーは再スロー
             throw $e;
         }
+    }
+
+    public function adminReservation()
+    {
+        $reservations = Reservation::with(['sheet', 'schedule.movie'])
+        ->whereHas('schedule', function ($query) {
+            // 今日以降のスケジュールのみ取得
+            $query->where('date', '>=', today());
+        })
+        ->get();
+
+        return view('adminReservation', [
+            'reservations' => $reservations
+        ]);
+    }
+
+    public function createAdminReservation()
+    {
+
+       return view('createAdminReservation');
+    }
+
+    public function postAdminReservation(Request $request)
+    {
+        $movie_id = $request->movie_id;
+        $validated = $request->validate([
+            'movie_id' => 'required',
+            'email' => 'required|email',
+            'name' => 'required',
+            'schedule_id' => 'required|exists:schedules,id',
+            'sheet_id' => 'required|exists:sheets,id',
+            // 複合ユニーク制約のバリデーション
+            'schedule_id,sheet_id' => 'unique:reservations,NULL,id,schedule_id,' . $request->schedule_id . ',sheet_id,' . $request->sheet_id,
+        ]);
+        try {
+            DB::transaction(function () use ($request) {
+                $post = new Reservation();
+                $post->schedule_id = $request->schedule_id;
+                $post->sheet_id = $request->sheet_id;
+                $post->date = Carbon::today()->format('Y-m-d');
+                $post->email = $request->email;
+                $post->name = $request->name;
+                $post->is_canceled = false;
+                $post->save();
+            });
+    
+            return redirect("/admin/reservations/")->with('success', '予約が完了しました。');
+    
+        } catch (\Illuminate\Database\QueryException $e) {
+            // 重複エントリーのエラーをキャッチ
+            if ($e->getCode() == '23000') {
+                return redirect("/admin/reservations/")->withErrors(['duplicate' => '既に予約が存在します。']);
+            } else {
+                return redirect("/admin/reservations/")->withErrors(['error' => 'エラーが発生して予約に失敗しました。']);
+            }
+        }
+    }
+
+    public function editReservation($id)
+    {
+        $reservation = Reservation::with(['sheet', 'schedule.movie'])->findOrFail($id);
+        return view('editReservation', [
+            'reservation' => $reservation
+        ]);
+    }
+
+    public function patchReservation(Request $request, $id)
+    {
+        $movie_id = $request->movie_id;
+        $reservation = Reservation::findOrFail($id);
+        // バリデーションルールを動的に設定
+        $rules = [
+            'movie_id' => 'required',
+            'email' => 'required|email',
+            'name' => 'required',
+            'schedule_id' => 'required|exists:schedules,id',
+            'sheet_id' => 'required|exists:sheets,id',
+        ];
+
+        // schedule_id または sheet_id が変更された場合のみ unique バリデーションを追加
+        if ($request->schedule_id != $reservation->schedule_id || $request->sheet_id != $reservation->sheet_id) {
+            $rules['schedule_id'] = 'required|unique:reservations,schedule_id,NULL,id,schedule_id,' . $request->schedule_id . ',sheet_id,' . $request->sheet_id;
+        }
+
+        // バリデーション実行
+        $validatedData = $request->validate($rules);
+        try {
+            DB::transaction(function () use ($request,$id) {
+                Reservation::where("id", $id)->update([
+                    "schedule_id" => $request->schedule_id,
+                    "sheet_id" => $request->sheet_id,
+                    "email" => $request->email,
+                    "name" => $request->name,
+                ]);
+            });
+    
+            return redirect("/admin/reservations/")->with('success', '予約が完了しました。');
+    
+        } catch (\Illuminate\Database\QueryException $e) {
+            // 重複エントリーのエラーをキャッチ
+            if ($e->getCode() == '23000') {
+                return redirect("/admin/reservations/")->withErrors(['duplicate' => '既に予約が存在します。']);
+            } else {
+                return redirect("/admin/reservations/")->withErrors(['error' => 'エラーが発生して予約に失敗しました。']);
+            }
+        }
+    }
+
+    public function deleteReservation($id)
+    {
+        $reservation = Reservation::findOrFail($id);
+
+        // データが存在すれば削除
+        $reservation->delete();
+
+        // 成功メッセージをフロントエンドに返す
+        return redirect("/admin/reservations/")->with('success', '削除しました。');
     }
 }

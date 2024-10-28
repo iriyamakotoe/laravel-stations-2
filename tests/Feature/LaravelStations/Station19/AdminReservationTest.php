@@ -129,7 +129,7 @@ class AdminReservationTest extends TestCase
         $this->assertEquals($reservationCount, $count);
     }
 
-    public function test管理者映集予約画面が表示されているか(): void
+    public function test管理者予約編集画面が表示されているか(): void
     {
         $movieId = $this->createMovie('タイトル')->id;
         $scheduleId = $this->createSchedule($movieId)->id;

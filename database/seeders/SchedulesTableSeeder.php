@@ -16,10 +16,10 @@ class SchedulesTableSeeder extends Seeder
     {
         //
         DB::table('schedules')->insert([
-            ['movie_id' => 242, 'start_time' => '2024-09-20 10:00:00', 'end_time' => '2024-09-20 12:00:00'],
-            ['movie_id' => 242, 'start_time' => '2024-09-20 12:30:00', 'end_time' => '2024-09-20 14:30:00'],
-            ['movie_id' => 242, 'start_time' => '2024-09-20 15:00:00', 'end_time' => '2024-09-20 17:00:00'],
-            ['movie_id' => 242, 'start_time' => '2024-09-20 20:00:00', 'end_time' => '2024-09-20 22:00:00'],
+            ['movie_id' => 360, 'start_time' => '2024-10-28 10:00:00', 'end_time' => '2024-10-28 12:00:00'],
+            ['movie_id' => 361, 'start_time' => '2024-10-28 12:30:00', 'end_time' => '2024-10-28 14:30:00'],
+            ['movie_id' => 362, 'start_time' => '2024-10-28 15:00:00', 'end_time' => '2024-10-28 17:00:00'],
+            ['movie_id' => 363, 'start_time' => '2024-10-28 20:00:00', 'end_time' => '2024-10-28 22:00:00'],
         ]);
     }
 }
