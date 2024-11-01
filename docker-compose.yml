@@ -87,6 +87,7 @@ services:
         container_name: phpmyadmin-container
         environment:
             PMA_HOST: mysql-container
+            PMA_PORT: 53306
             PMA_USER: ${DOCKER_DB_USERNAME:-dev}
             PMA_PASSWORD: ${DOCKER_DB_PASSWORD:-dev}
         ports:
