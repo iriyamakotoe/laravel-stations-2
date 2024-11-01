@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Movie</title>
+    <title>Schedule</title>
 </head>
 <body>
 @if (session('success'))
@@ -16,7 +16,7 @@
     @if ($movie->schedules->isNotEmpty())
         <h2><a href="/admin/movies/{{ $movie->id }}">{{ $movie->id }}：{{ $movie->title }}</a></h2>
         <p>@foreach ($movie->schedules as $schedule)    
-        <a href="/admin/schedules/{{ $schedule->id }}">{{ $schedule->start_time->format('H:i') }}〜{{ $schedule->end_time->format('H:i') }}</a><br>
+        <a href="/admin/schedules/{{ $schedule->id }}">{{ $schedule->start_time->format('H:i') }}〜{{ $schedule->end_time->format('H:i') }}</a>　スクリーン{{ $schedule->screen->screen }}<br>
         @endforeach</p>
         <p><a href="/admin/movies/{{ $movie->id }}/schedules/create">新規登録</a></p>
     @endif

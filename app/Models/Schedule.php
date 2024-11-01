@@ -25,4 +25,10 @@ class Schedule extends Model
         return $this->belongsTo(Movie::class);
         
     }
+    public function screen()
+    {
+        return $this->belongsTo(Screen::class);
+        
+    }
+
 }

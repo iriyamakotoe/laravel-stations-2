@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>reservation</title>
+    <title>Reservation</title>
 </head>
 <body>
 @if (session('success'))
@@ -26,6 +26,7 @@
             <th></th>
             <th>映画作品</th>
             <th>座席</th>
+            <th>スクリーン</th>
             <th>日時</th>
             <th>名前</th>
             <th>メールアドレス</th>
@@ -37,6 +38,7 @@
             </td>
             <td>{{ $reservation->schedule->movie->title }}</td>
             <td>{{ strtoupper($reservation->sheet->row) }}{{ $reservation->sheet->column }}</td>
+            <td>{{ $reservation->schedule->screen->screen }}</td>
             <td>{{ $reservation->date }} {{ $reservation->schedule->start_time->format('H:i') }}〜{{ $reservation->schedule->end_time->format('H:i') }}</td>
             <td>{{ $reservation->name }}</td>
             <td>{{ $reservation->email }}</td>
