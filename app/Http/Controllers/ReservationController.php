@@ -9,6 +9,7 @@ use App\Models\Sheet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class ReservationController extends Controller
 {
@@ -94,6 +95,8 @@ class ReservationController extends Controller
     public function postReservation(Request $request)
     {
         $movie_id = $request->movie_id;
+        $user_email = Auth::user()->email;
+        $user_name = Auth::user()->name;
         $validated = $request->validate([
             'email' => 'required|email',
             'name' => 'required',
@@ -104,13 +107,13 @@ class ReservationController extends Controller
             'schedule_id,sheet_id' => 'unique:reservations,NULL,id,schedule_id,' . $request->schedule_id . ',sheet_id,' . $request->sheet_id,
         ]);
         try {
-            DB::transaction(function () use ($request) {
+            DB::transaction(function () use ($request,$user_email,$user_name) {
                 $post = new Reservation();
                 $post->schedule_id = $request->schedule_id;
                 $post->sheet_id = $request->sheet_id;
                 $post->date = $request->date;
-                $post->email = $request->email;
-                $post->name = $request->name;
+                $post->email = $user_email;
+                $post->name = $user_name;
                 $post->is_canceled = false;
                 $post->save();
             });

@@ -15,6 +15,7 @@
         "laravel/tinker": "^2.9"
     },
     "require-dev": {
+        "askdkc/breezejp": "^1.8",
         "fakerphp/faker": "^1.23.1",
         "laravel/breeze": "^2.2",
         "laravel/sail": "^1.32.0",
