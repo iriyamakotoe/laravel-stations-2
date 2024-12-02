@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>予約編集画面</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
+    <h1>管理者：予約編集画面</h1>
 @if ($errors->any())
     <div>
         <ul>
@@ -22,7 +24,7 @@
     <table>
         <tr>
             <th>映画作品</th>
-            <td>{{ $reservation->schedule->movie->id }}</td>
+            <td><input type="text" name="movie_id" value="{{ $reservation->schedule->movie->id }}" /></td>
         </tr>
         <tr>
             <th>上映スケジュール</th>

@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Movie</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
+    <h1>映画一覧画面</h1>
     <div class="search-box">
         <form action="/movies" method="GET">
             <input type="text" name="keyword" value="{{ request('keyword') }}" />

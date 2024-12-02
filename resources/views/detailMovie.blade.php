@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>映画詳細</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
+    <h1>映画詳細画面</h1>
 @if (session('success'))
     <div class="alert alert-success">
         {{ session('success') }}

@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>予約作成画面</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
+    <h1>管理者：予約登録画面</h1>
 @if ($errors->any())
     <div>
         <ul>
