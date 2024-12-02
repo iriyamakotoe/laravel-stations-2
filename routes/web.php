@@ -29,9 +29,12 @@ Route::delete('/admin/schedules/{id}/destroy', [ScheduleController::class, 'dele
 
 Route::get('/sheets', [SheetController::class, 'sheets']);
 
-Route::get('/movies/{movie_id}/schedules/{schedule_id}/sheets', [ReservationController::class, 'getSheets']);
-Route::get('/movies/{movie_id}/schedules/{schedule_id}/reservations/create', [ReservationController::class, 'createReservation']);
-Route::post('/reservations/store', [ReservationController::class, 'postReservation']);
+// ログインしているユーザーのみ予約を作成できる
+Route::middleware(['auth'])->group(function () {
+    Route::get('/movies/{movie_id}/schedules/{schedule_id}/sheets', [ReservationController::class, 'getSheets']);
+    Route::get('/movies/{movie_id}/schedules/{schedule_id}/reservations/create', [ReservationController::class, 'createReservation']);
+    Route::post('/reservations/store', [ReservationController::class, 'postReservation']);
+});
 
 Route::get('/admin/reservations', [ReservationController::class, 'adminReservation']);
 Route::get('/admin/reservations/create', [ReservationController::class, 'createAdminReservation']);
@@ -39,8 +42,6 @@ Route::post('/admin/reservations', [ReservationController::class, 'postAdminRese
 Route::get('/admin/reservations/{id}/edit', [ReservationController::class, 'editReservation']);
 Route::patch('/admin/reservations/{id}', [ReservationController::class, 'patchReservation']);
 Route::delete('/admin/reservations/{id}', [ReservationController::class, 'deleteReservation']);
-
-
 
 Route::get('/', function () {
     return view('welcome');

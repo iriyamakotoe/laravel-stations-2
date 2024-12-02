@@ -18,8 +18,10 @@ class Reservation extends Model
     {
         return $this->belongsTo(Schedule::class);
     }
+
+    // emailでUserと紐づける
     public function user()
     {
-        return $this->belongsTo(User::class, 'email', 'email');
+        return $this->belongsTo(User::class);
     }
 }

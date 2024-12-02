@@ -46,9 +46,4 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-
-    public function profile(): HasOne
-    {
-        return $this->hasOne(Reservation::class, 'email', 'email');
-    }
 }
