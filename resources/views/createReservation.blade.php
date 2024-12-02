@@ -39,11 +39,11 @@
         </tr>
         <tr>
             <th>予約者メールアドレス</th>
-            <td><input type="text" name="email" value="{{ old('email') }}" /></td>
+            <td>{{$user_email}}</td>
         </tr>
         <tr>
             <th>予約者氏名</th>
-            <td><input type="text" name="name" value="{{ old('name') }}" /></td>
+            <td>{{$user_name}}</td>
         </tr>
     </table>
     <p><input type="submit"></p>

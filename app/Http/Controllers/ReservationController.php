@@ -58,6 +58,10 @@ class ReservationController extends Controller
         $date = $request->query('date');
         $sheet_id = $request->query('sheetId');
 
+        // ユーザー情報を取得
+        $user_email = Auth::user()->email;
+        $user_name = Auth::user()->name;
+
         // パラメータが存在しない場合は400エラーを返す
         if (!$date || !$sheet_id) {
             // ここでビューにリダイレクトするか、エラーとしてステータス400を返す
@@ -71,6 +75,7 @@ class ReservationController extends Controller
         if (!$movie || !$schedule) {
             return response()->json(['error' => 'Invalid movie or schedule ID'], 400);
         }
+
 
         // 既に予約済みの席があるかどうかを判定
         $existingReservation = Reservation::where('schedule_id', $schedule_id)
@@ -87,7 +92,9 @@ class ReservationController extends Controller
             'date' => $date,
             'movie' => $movie,
             'schedule' => $schedule,
-            'sheet' => $sheet
+            'sheet' => $sheet,
+            'user_email' => $user_email,
+            'user_name' => $user_name,
         ]);
     }
 
@@ -98,8 +105,8 @@ class ReservationController extends Controller
         $user_email = Auth::user()->email;
         $user_name = Auth::user()->name;
         $validated = $request->validate([
-            'email' => 'required|email',
-            'name' => 'required',
+            // 'email' => 'required|email',
+            // 'name' => 'required',
             'schedule_id' => 'required|exists:schedules,id',
             'sheet_id' => 'required|exists:sheets,id',
             'date' => 'required',
