@@ -34,6 +34,6 @@
     </table>
 
     <!-- ページネーションリンクを表示 -->
-    {{ $movies->links() }}
+    {{-- {{ $movies->links() }} --}}
 </body>
 </html>
