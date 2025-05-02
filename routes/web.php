@@ -18,6 +18,7 @@ Route::post('/admin/movies/store', [MovieController::class, 'postMovie']);
 Route::get('/admin/movies/{id}/edit', [MovieController::class, 'editMovie']);
 Route::patch('/admin/movies/{id}/update', [MovieController::class, 'patchMovie']);
 Route::delete('/admin/movies/{id}/destroy', [MovieController::class, 'deleteMovie']);
+Route::get('/admin/movies/{movie}', [MovieController::class, 'show'])->name('admin.movies.show');
 
 Route::get('/admin/schedules', [ScheduleController::class, 'adminSchedule']);
 Route::get('/admin/schedules/{id}', [ScheduleController::class, 'detailSchedule']);

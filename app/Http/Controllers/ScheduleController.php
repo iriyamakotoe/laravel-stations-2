@@ -54,6 +54,25 @@ class ScheduleController extends Controller
         $startTime = Carbon::createFromFormat('Y-m-d H:i', $validated['start_time_date'] . ' ' . $validated['start_time_time']);
         $endTime = Carbon::createFromFormat('Y-m-d H:i', $validated['end_time_date'] . ' ' . $validated['end_time_time']);
 
+    // カスタムバリデーション: 同じスクリーンで時間が重複していないかチェック
+    $overlapping = Schedule::where('screen_id', $validated['screen_id'])
+        ->where(function ($query) use ($startTime, $endTime) {
+            $query->whereBetween('start_time', [$startTime, $endTime])
+                  ->orWhereBetween('end_time', [$startTime, $endTime])
+                  ->orWhere(function ($query) use ($startTime, $endTime) {
+                      $query->where('start_time', '<', $startTime)
+                            ->where('end_time', '>', $endTime);
+                  });
+        })
+        ->exists();
+
+    if ($overlapping) {
+        return back()->withErrors([
+            'screen_id' => 'このスクリーンではすでに他の上映スケジュールがあります。時間が重複しています。'
+        ])->withInput();
+    }
+
+
         // カスタムバリデーション
         if ($startTime->gt($endTime)) {
             return back()->withErrors([
@@ -92,11 +111,12 @@ class ScheduleController extends Controller
             return back()->withErrors([
                 'screen_id' => 'このスクリーンは別の映画で設定されています。',
             ])->withInput();
-        }elseif($setMovieScreen && $setMovieScreen != $validated['screen_id']){
-            return back()->withErrors([
-                'screen_id' => 'この映画は別のスクリーンで設定されています。',
-            ])->withInput();
         }
+        // elseif($setMovieScreen && $setMovieScreen != $validated['screen_id']){
+        //     return back()->withErrors([
+        //         'screen_id' => 'この映画は別のスクリーンで設定されています。',
+        //     ])->withInput();
+        // }
 
         DB::transaction(function () use ($request, $validated, $id, $startTime, $endTime) {
             $post = new Schedule();
@@ -107,7 +127,7 @@ class ScheduleController extends Controller
             $post->save();
         });
 
-        return redirect('/admin/schedules');
+        return redirect('/admin/movies/'.$id);
      }
 
      public function editSchedule($id)
@@ -174,11 +194,12 @@ class ScheduleController extends Controller
             return back()->withErrors([
                 'screen_id' => 'このスクリーンは別の映画で設定されています。',
             ])->withInput();
-        }elseif($setMovieScreen && $setMovieScreen != $validated['screen_id']){
-            return back()->withErrors([
-                'screen_id' => 'この映画は別のスクリーンで設定されています。',
-            ])->withInput();
         }
+        // elseif($setMovieScreen && $setMovieScreen != $validated['screen_id']){
+        //     return back()->withErrors([
+        //         'screen_id' => 'この映画は別のスクリーンで設定されています。',
+        //     ])->withInput();
+        // }
 
         // トランザクションでデータ更新
         DB::transaction(function () use ($request, $validated, $id, $startTime, $endTime) {
