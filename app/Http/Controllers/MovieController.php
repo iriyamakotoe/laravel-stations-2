@@ -33,14 +33,14 @@ class MovieController extends Controller
         }
 
         // ページネーションを設定（例：1ページあたり15件）
-        $movies = $query->paginate(20)->appends([
-            'keyword' => $keyword,
-            'is_showing' => $isShowing
-        ]);
+        // $movies = $query->paginate(20)->appends([
+        //     'keyword' => $keyword,
+        //     'is_showing' => $isShowing
+        // ]);
 
 // 作品データの変数名は、 view に渡している変数名と合わせて適宜変更してください
-// $movies = DB::table('movies')->whereRaw("title = {$request->input('keyword')}")->get();
-// $movies = DB::table('movies')->whereRaw("title = ?", [$request->input('keyword')])->get();
+// $movies = DB::table('movies')->whereRaw("title = '{$request->input('keyword')}'")->get();
+$movies = DB::table('movies')->whereRaw("title = ?", [$request->input('keyword')])->get();
 
         return view('index', [
             'movies' => $movies,
