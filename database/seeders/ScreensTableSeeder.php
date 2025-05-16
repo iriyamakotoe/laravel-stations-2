@@ -15,9 +15,9 @@ class ScreensTableSeeder extends Seeder
     public function run()
     {
         $seeds = [
-            ['id' => 1, 'screen' => 1],
-            ['id' => 2, 'screen' => 2],
-            ['id' => 3, 'screen' => 3],
+            ['id' => 1, 'screen' => 1, 'name' => 'screen 1'],
+            ['id' => 2, 'screen' => 2, 'name' => 'screen 2'],
+            ['id' => 3, 'screen' => 3, 'name' => 'screen 3'],
         ];
 
         foreach ($seeds as $seed) {

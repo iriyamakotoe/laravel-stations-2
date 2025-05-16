@@ -8,9 +8,6 @@ use App\Http\Controllers\SheetController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\ReservationController;
 
-// Route::get('URL', [Controllerの名前::class, 'Controller内のfunction名']);
-Route::get('/movies', [MovieController::class, 'index']);
-Route::get('/movies/{id}', [MovieController::class, 'detailMovie']);
 Route::get('/admin/movies', [MovieController::class, 'admin']);
 Route::get('/admin/movies/create', [MovieController::class, 'createMovie']);
 Route::get('/admin/movies/{id}', [MovieController::class, 'detailAdminMovie']);
@@ -28,10 +25,11 @@ Route::get('/admin/schedules/{id}/edit', [ScheduleController::class, 'editSchedu
 Route::patch('/admin/schedules/{id}/update', [ScheduleController::class, 'patchSchedule']);
 Route::delete('/admin/schedules/{id}/destroy', [ScheduleController::class, 'deleteSchedule']);
 
-Route::get('/sheets', [SheetController::class, 'sheets']);
-
 // ログインしているユーザーのみ予約を作成できる
 Route::middleware(['auth'])->group(function () {
+    Route::get('/movies', [MovieController::class, 'index']);
+    Route::get('/movies/{id}', [MovieController::class, 'detailMovie']);
+    Route::get('/sheets', [SheetController::class, 'sheets']);
     Route::get('/movies/{movie_id}/schedules/{schedule_id}/sheets', [ReservationController::class, 'getSheets']);
     Route::get('/movies/{movie_id}/schedules/{schedule_id}/reservations/create', [ReservationController::class, 'createReservation']);
     Route::post('/reservations/store', [ReservationController::class, 'postReservation']);
